@@ -16,5 +16,9 @@
     "serve-favicon": "~2.3.0",
     "swagger-express-mw": "^0.7.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-util": "^3.0.7",
+    "js-yaml": "^3.6.1"
+  }
 }
