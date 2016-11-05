@@ -2,9 +2,9 @@
  "swagger": "2.0",
  "info": {
   "version": "0.2.0",
-  "title": "Traits App API"
+  "title": "Traits App API te"
  },
- "host": "api-traits.herokuapp.com",
+ "host": "traits-app-api.herokuapp.com",
  "basePath": "/api",
  "schemes": [
   "http",

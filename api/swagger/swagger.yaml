@@ -1,9 +1,9 @@
 swagger: "2.0"
 info:
-  version: "0.1.0"
-  title: Traits API
+  version: "0.2.0"
+  title: Traits App API test
 # during dev, should point to your local machine
-host: traits-app-api.herokuapp.com #localhost:3000 #api-traits.herokuapp.com #
+host: traits-app-api.herokuapp.com #localhost:3000 #
 # basePath prefixes all resource paths 
 basePath: /api
 # 
@@ -18,43 +18,23 @@ consumes:
 produces:
   - application/json
 paths:
-  /userTraits:
-    # our controller name
-    #x-swagger-router-controller: user_traits
-    post:
+  /personalityTraits/{type}:
+    put:
       #operationId: save_user_traits
-      tags: [User Traits]
-      description: add a new user traits to user
+      tags: [Personality Traits]
+      description: add a new personality traits to personality
       # movie info to be stored
       parameters:
-        - name: username
-          description: Username
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/UserTraits"
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/GeneralResponse"
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-  /userTraits/{username}:
-    # our controller name
-    #x-swagger-router-controller: user_traits
-    get:
-      #operationId: get_user_traits
-      tags: [User Traits]
-      description: get a user traits
-      # define the type of response for Success "200" and Error
-      parameters:
-        - name: username
+        - name: type
           type: string
           in: path
           required: true
+        - name: personalitytrait
+          description: Personality traits properties
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/PersonalityTraits"
       responses:
         "200":
           description: Success
@@ -64,6 +44,8 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  
+  /userTraits/{username}:
     put:
       #operationId: update_user_traits
       tags: [User Traits]
@@ -90,41 +72,21 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-    delete:
-      #operationId: delete_user_traits
-      tags: [User Traits]
-      description: delete a movie
-      # define the parameters
-      parameters:
-        - name: username
-          description: Username
-          type: string
-          in: path
-          required: true
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/GeneralResponse"
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse" 
-  /description:
+  /story:
     # our controller name
     #x-swagger-router-controller: description
     post:
       #operationId: save_description
-      tags: [Description]
-      description: add a new description
+      tags: [Story]
+      description: add a new story
       # movie info to be stored
       parameters:
         - name: type
-          description: description properties
+          description: story properties
           in: body
           required: true
           schema:
-            $ref: "#/definitions/Description"
+            $ref: "#/definitions/Story"
       responses:
         "200":
           description: Success
@@ -134,13 +96,13 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /descriptions/{type}:
+  /stories/{type}:
     # our controller name
     #x-swagger-router-controller: description
     get:
       #operationId: get_descriptions_by_type
-      tags: [Description]
-      description: get descriptions by type
+      tags: [Story]
+      description: get stories by type
       # define the type of response for Success "200" and Error
       parameters:
         - name: type
@@ -322,30 +284,6 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"  
-  /userTypePart:
-    # our controller name
-    #x-swagger-router-controller: user_type_part
-    post:
-      #operationId: save_user_type_part
-      tags: [User Type Part]
-      description: add a new user type part to user
-      # movie info to be stored
-      parameters:
-        - name: username
-          description: Username
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/UserTypePart"
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/GeneralResponse"
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"
   /userTypePart/{username}:
     # our controller name 
     #x-swagger-router-controller: user_type_part
@@ -631,7 +569,8 @@ definitions:
       usertraits:
         type: array
         items:
-          $ref: "#/definitions/Trait"
+          $ref: "#/definitions/UserTraits"
+          
   GetPersonalityResponse:
     required:
       - type
@@ -655,9 +594,6 @@ definitions:
   UserTypePart:
     type: object
     properties:
-      username:
-        type: string
-        description: username
       type_percentage:
         type: array
         items: 
@@ -675,25 +611,38 @@ definitions:
         type: string
         format: date-time
         description: Last update. E.g. '2016-06-17T15:28:34Z' (RFC 3339, ISO 8601)
+        
   UserTraits:
     type: object
     properties:
-      username:
+      personalitytype:
         type: string
-        description: Username
+        description: personality type for user selected traits
       traits:
         type: array
-        items: 
-         $ref: "#/definitions/Trait"
+        items: {
+          type: string
+        }
+  
+  PersonalityTraits:
+    type: object
+    properties:
+      traits:
+        type: array
+        items: {
+          type: string
+        }
+        
   Trait:
     type: object
     properties:
       trait:
         type: string
         description: Personality trait
-      isme:
-        type: string
-        description: Is it me?
+      weight:
+        type: number
+        description: weight determined by how often the trait is used for the personality type
+  
   User:
     type: object
     properties:
@@ -709,9 +658,19 @@ definitions:
       lastname:
         type: string
         description: user lastname
+      timestamp:
+        type: string
+        format: date-time
+        description: The date the user registered (E.g. '2016-06-17T15:28:34Z' (RFC 3339, ISO 8601))
+      usertraits:
+        type: array
+        items:
+          $ref: "#/definitions/UserTraits"
+          
     required:
       - email
       - password
+      
   UpdateUser:
     type: object
     properties:
@@ -721,6 +680,7 @@ definitions:
       lastname:
         type: string
         description: user lastname
+        
   UserSignin:
     type: object
     properties:
@@ -730,6 +690,7 @@ definitions:
       password:
         type: string
         description: user password
+        
   Personality:
     type: object
     properties:
@@ -754,8 +715,13 @@ definitions:
       color:
         type: string
         description: task description
+      traits:
+        type: array
+        items: 
+         $ref: "#/definitions/Trait"
     required:
       - type
+      
   People:
     type: object
     properties:
@@ -767,20 +733,24 @@ definitions:
         type: string
       isreal:
         type: string
-      from:
+      info:
         type: string
       personalitytype:
         type: string
+      tags:
+        type: array
+        items: {
+          type: string
+        }
     required:
       - name
-  Description:
+      
+  Story:
     type: object
     properties:
       title:
         type: string
       description:
-        type: string
-      tags:
         type: string
       source:
         type: string
@@ -788,8 +758,14 @@ definitions:
         type: string
       personalitytype:
         type: string
+      tags:
+        type: array
+        items: {
+          type: string
+        }
     required:
       - title
+      
   GeneralResponse:
     type: object
     properties:
@@ -802,6 +778,7 @@ definitions:
     required:
       - success
       - description
+      
   ErrorResponse:
     required:
       - message
