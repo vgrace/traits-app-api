@@ -26,7 +26,10 @@ router.post('/user', function (req, res, next) {
 // Sign in user
 router.post('/usersignin', function (req, res, next) {
     var user_creds = req.body;
+    console.log(user_creds); 
     auth.checkuser(req.body.email, req.body.password, function (err, user) {
+        console.log(req.body.email);
+        console.log(req.body.password);
         res.setHeader('Content-Type', 'application/json');
         if (err) {
             var ret_err = {
@@ -98,11 +101,12 @@ router.get('/personality/:type', function (req, res, next) {
 
 /* USER TYPE PART */
 
-// Add User Type Part
-router.post('/userTypePart', function (req, res, next) {
+// Update User Type Part
+router.put('/userTypePart/:username', function (req, res, next) {
+    var username = req.params.username;
     var user_type_part = req.body;
     res.setHeader('Content-Type', 'application/json');
-    data.addUserTypeParts(user_type_part.username, user_type_part.type_percentage, function (err) {
+    data.addUserTypeParts(username, user_type_part.type_percentage, function (err) {
         if (err) {
             var ret_err = {
                 "message": err
@@ -169,13 +173,13 @@ router.get('/people/:type', function (req, res, next) {
 });
 
 
-/* DESCRIPTION */
+/* STORY */
 
-// Add a new description
-router.post('/description', function (req, res, next) {
+// Add a new story
+router.post('/story', function (req, res, next) {
     var person = req.body;
     res.setHeader('Content-Type', 'application/json');
-    data.addDescription(person, function (err, descriptionSaved) {
+    data.addStory(person, function (err, storySaved) {
         if (err) {
             var ret_err = {
                 "message": err
@@ -183,16 +187,16 @@ router.post('/description', function (req, res, next) {
             res.status(500).send(ret_err);
         }
         else {
-            console.log(descriptionSaved);
-            res.json({ success: 1, description: "Description added" });
+            console.log(storySaved);
+            res.json({ success: 1, story: "Story added" });
         }
     });
 });
 
-// Get descriptions by type
-router.get('/descriptions/:type', function (req, res, next) {
+// Get stories by type
+router.get('/stories/:type', function (req, res, next) {
     var type = req.params.type;
-    data.getDescriptionsByType(type, function (err, descriptions) {
+    data.getStoriesByType(type, function (err, stories) {
         res.setHeader('Content-Type', 'application/json');
         if (err) {
             var ret_err = {
@@ -201,7 +205,7 @@ router.get('/descriptions/:type', function (req, res, next) {
             res.status(500).send(ret_err);
         }
         else {
-            res.send(descriptions);
+            res.send(stories);
         }
     });
 });
@@ -209,10 +213,31 @@ router.get('/descriptions/:type', function (req, res, next) {
 /* USER TRAITS */
 
 // Add a new user traits to user
-router.post('/userTraits', function (req, res, next) {
+router.put('/userTraits/:username', function (req, res, next) {
+    var username = req.params.username;
     var user_traits = req.body;
     res.setHeader('Content-Type', 'application/json');
-    data.addUserTraits(user_traits.username, user_traits.traits, function (err) {
+    data.addUserTraits(username, user_traits.traits, function (err) {
+        if (err) {
+            var ret_err = {
+                "message": err
+            };
+            res.status(500).send(ret_err);
+        }
+        else {
+            res.json({ success: 1, description: "User traits added" });
+        }
+    });
+});
+
+/* PEROSNALITY TRAITS*/
+router.put('/personalityTraits/:type', function (req, res, next) {
+    var type = req.params.type;
+    var personality_traits = req.body;
+    console.log(personality_traits.traits);
+    res.setHeader('Content-Type', 'application/json');
+    //res.json({ success: 1, description: "User traits added" });
+    data.addPersonalityTraits(type, personality_traits.traits, function (err) {
         if (err) {
             var ret_err = {
                 "message": err

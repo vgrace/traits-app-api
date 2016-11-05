@@ -1,10 +1,10 @@
 {
  "swagger": "2.0",
  "info": {
-  "version": "0.1.0",
-  "title": "Traits API"
+  "version": "0.2.0",
+  "title": "Traits App API"
  },
- "host": "traits-app-api.herokuapp.com",
+ "host": "api-traits.herokuapp.com",
  "basePath": "/api",
  "schemes": [
   "http",
@@ -17,20 +17,26 @@
   "application/json"
  ],
  "paths": {
-  "/userTraits": {
-   "post": {
+  "/personalityTraits/{type}": {
+   "put": {
     "tags": [
-     "User Traits"
+     "Personality Traits"
     ],
-    "description": "add a new user traits to user",
+    "description": "add a new personality traits to personality",
     "parameters": [
      {
-      "name": "username",
-      "description": "Username",
+      "name": "type",
+      "type": "string",
+      "in": "path",
+      "required": true
+     },
+     {
+      "name": "personalitytrait",
+      "description": "Personality traits properties",
       "in": "body",
       "required": true,
       "schema": {
-       "$ref": "#/definitions/UserTraits"
+       "$ref": "#/definitions/PersonalityTraits"
       }
      }
     ],
@@ -51,34 +57,6 @@
    }
   },
   "/userTraits/{username}": {
-   "get": {
-    "tags": [
-     "User Traits"
-    ],
-    "description": "get a user traits",
-    "parameters": [
-     {
-      "name": "username",
-      "type": "string",
-      "in": "path",
-      "required": true
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Success",
-      "schema": {
-       "$ref": "#/definitions/GeneralResponse"
-      }
-     },
-     "default": {
-      "description": "Error",
-      "schema": {
-       "$ref": "#/definitions/ErrorResponse"
-      }
-     }
-    }
-   },
    "put": {
     "tags": [
      "User Traits"
@@ -116,51 +94,22 @@
       }
      }
     }
-   },
-   "delete": {
-    "tags": [
-     "User Traits"
-    ],
-    "description": "delete a movie",
-    "parameters": [
-     {
-      "name": "username",
-      "description": "Username",
-      "type": "string",
-      "in": "path",
-      "required": true
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Success",
-      "schema": {
-       "$ref": "#/definitions/GeneralResponse"
-      }
-     },
-     "default": {
-      "description": "Error",
-      "schema": {
-       "$ref": "#/definitions/ErrorResponse"
-      }
-     }
-    }
    }
   },
-  "/description": {
+  "/story": {
    "post": {
     "tags": [
-     "Description"
+     "Story"
     ],
-    "description": "add a new description",
+    "description": "add a new story",
     "parameters": [
      {
       "name": "type",
-      "description": "description properties",
+      "description": "story properties",
       "in": "body",
       "required": true,
       "schema": {
-       "$ref": "#/definitions/Description"
+       "$ref": "#/definitions/Story"
       }
      }
     ],
@@ -180,12 +129,12 @@
     }
    }
   },
-  "/descriptions/{type}": {
+  "/stories/{type}": {
    "get": {
     "tags": [
-     "Description"
+     "Story"
     ],
-    "description": "get descriptions by type",
+    "description": "get stories by type",
     "parameters": [
      {
       "name": "type",
@@ -425,39 +374,6 @@
       "type": "string",
       "in": "path",
       "required": true
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Success",
-      "schema": {
-       "$ref": "#/definitions/GeneralResponse"
-      }
-     },
-     "default": {
-      "description": "Error",
-      "schema": {
-       "$ref": "#/definitions/ErrorResponse"
-      }
-     }
-    }
-   }
-  },
-  "/userTypePart": {
-   "post": {
-    "tags": [
-     "User Type Part"
-    ],
-    "description": "add a new user type part to user",
-    "parameters": [
-     {
-      "name": "username",
-      "description": "Username",
-      "in": "body",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/UserTypePart"
-      }
      }
     ],
     "responses": {
@@ -884,7 +800,7 @@
     "usertraits": {
      "type": "array",
      "items": {
-      "$ref": "#/definitions/Trait"
+      "$ref": "#/definitions/UserTraits"
      }
     }
    }
@@ -923,10 +839,6 @@
   "UserTypePart": {
    "type": "object",
    "properties": {
-    "username": {
-     "type": "string",
-     "description": "username"
-    },
     "type_percentage": {
      "type": "array",
      "items": {
@@ -956,14 +868,25 @@
   "UserTraits": {
    "type": "object",
    "properties": {
-    "username": {
+    "personalitytype": {
      "type": "string",
-     "description": "Username"
+     "description": "personality type for user selected traits"
     },
     "traits": {
      "type": "array",
      "items": {
-      "$ref": "#/definitions/Trait"
+      "type": "string"
+     }
+    }
+   }
+  },
+  "PersonalityTraits": {
+   "type": "object",
+   "properties": {
+    "traits": {
+     "type": "array",
+     "items": {
+      "type": "string"
      }
     }
    }
@@ -975,9 +898,9 @@
      "type": "string",
      "description": "Personality trait"
     },
-    "isme": {
-     "type": "string",
-     "description": "Is it me?"
+    "weight": {
+     "type": "number",
+     "description": "weight determined by how often the trait is used for the personality type"
     }
    }
   },
@@ -999,6 +922,17 @@
     "lastname": {
      "type": "string",
      "description": "user lastname"
+    },
+    "timestamp": {
+     "type": "string",
+     "format": "date-time",
+     "description": "The date the user registered (E.g. '2016-06-17T15:28:34Z' (RFC 3339, ISO 8601))"
+    },
+    "usertraits": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/UserTraits"
+     }
     }
    },
    "required": [
@@ -1062,6 +996,12 @@
     "color": {
      "type": "string",
      "description": "task description"
+    },
+    "traits": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/Trait"
+     }
     }
    },
    "required": [
@@ -1083,27 +1023,30 @@
     "isreal": {
      "type": "string"
     },
-    "from": {
+    "info": {
      "type": "string"
     },
     "personalitytype": {
      "type": "string"
+    },
+    "tags": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
     }
    },
    "required": [
     "name"
    ]
   },
-  "Description": {
+  "Story": {
    "type": "object",
    "properties": {
     "title": {
      "type": "string"
     },
     "description": {
-     "type": "string"
-    },
-    "tags": {
      "type": "string"
     },
     "source": {
@@ -1114,6 +1057,12 @@
     },
     "personalitytype": {
      "type": "string"
+    },
+    "tags": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
     }
    },
    "required": [

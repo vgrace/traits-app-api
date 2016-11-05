@@ -2,27 +2,27 @@
     var database = require('./database.js');
 
     /*
-    * DESCRIPTION
+    * STORY
     */
-    data.addDescription = function (description, next) {
+    data.addStory = function (story, next) {
         database.getDb(function (err, db) {
             if (err) {
                 console.log("Failed to add description to db: " + err)
                 next(err, null);
             }
             else {
-                db.descriptions.insert(description, next);
+                db.stories.insert(story, next);
             }
         });
     }
 
-    data.getDescriptionsByType = function (type, next) {
+    data.getStoriesByType = function (type, next) {
         database.getDb(function (err, db) {
             if (err) {
                 next(err);
             }
             else {
-                db.descriptions.find({ personalitytype: type }).toArray(function (err, results) {
+                db.stories.find({ personalitytype: type }).toArray(function (err, results) {
                     if (err) {
                         next(err, null);
                     }
@@ -151,15 +151,50 @@
             }
             else {
                 for (var i = 0; i < userTraits.length; i++) {
-                    db.users.update(
-                    { username: username },
-                    { $pull: { usertraits: { 'trait': userTraits[i].trait } } })
+                    //db.users.update(
+                    //{ username: username },
+                    //{ $pull: { usertraits: { 'trait': userTraits[i].trait } } })
+
+                    db.users.update({ username: username, "usertraits": { $ne: userTraits[i] } },
+                       {
+                           $addToSet: { "usertraits":  userTraits[i]  }
+                       }, false, true);
                 }
 
-                db.users.update(
-                    { username: username },
-                    { $push: { 'usertraits': { $each: userTraits } } },
-                    next);
+                //db.users.update(
+                //    { username: username },
+                //    { $push: { 'usertraits': { $each: userTraits } } },
+                //    next);
+                next(); 
+            }
+            
+        });
+    }
+
+    /*
+    * PERSONALITY TRAITS
+    */
+    data.addPersonalityTraits = function (type, personalityTraits, next) {
+        database.getDb(function (err, db) {
+            if (err) {
+                console.log("Failed to add user trait");
+                next(err);
+            }
+            else {
+                console.log("in traits: " + personalityTraits);
+                for (var i = 0; i < personalityTraits.length; i++) {
+                    // If trait exists, add 1 to weight
+                    db.personalities.update({ type: type, "traits.trait": personalityTraits[i] },
+                        {
+                            $inc: { "traits.$.weight": 1 },
+                        }, false, true)
+                    // If trait does not exists, add to traits array
+                    db.personalities.update({ type: type, "traits.trait": { $ne: personalityTraits[i] } },
+                       {
+                           $addToSet: { "traits": { 'trait': personalityTraits[i], 'weight': 0 } }
+                       }, false, true);
+                }
+                next(null);
             }
         });
     }

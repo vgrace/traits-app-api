@@ -1,4 +1,5 @@
-//testing stuff
+//To start debug set DEBUG=traits-app-api:* & npm start
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
