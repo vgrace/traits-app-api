@@ -143,29 +143,40 @@
     /*
     * USER TRAITS
     */
-    data.addUserTraits = function (username, userTraits, next) {
+    data.addUserTraits = function (username, userTrait, next) {
         database.getDb(function (err, db) {
             if (err) {
                 console.log("Failed to add user trait");
                 next(err, null);
             }
             else {
-                for (var i = 0; i < userTraits.length; i++) {
-                    //db.users.update(
-                    //{ username: username },
-                    //{ $pull: { usertraits: { 'trait': userTraits[i].trait } } })
+                //db.users.update({"username": "tom"}, {"$set": {"documents": []}})
+                console.log(userTrait);
+                db.users.update({ "username": username },
+                    { "$pull": { 'usertraits': { 'personalitytype': userTrait.personalitytype } }});
 
-                    db.users.update({ username: username, "usertraits": { $ne: userTraits[i] } },
-                       {
-                           $addToSet: { "usertraits":  userTraits[i]  }
-                       }, false, true);
-                }
+                db.users.update({ "username": username },
+                    { "$push": { "usertraits": { "personalitytype": userTrait.personalitytype, "traits": userTrait.traits} } }, next);
+
+                //db.users.update({ "username": username, "usertraits.personalitytype": userTrait.personalitytype },
+                //    { "$set": { "traits": userTrait.traits } });
+
+                //for (var i = 0; i < userTrait.traits.length; i++) {
+                    //db.users.update(
+                    //{ username: username, "usertraits.personalitytype": userTrait.personalitytype},
+                    //{ $pull: { usertraits: { 'usertraits.traits': userTraits[i].trait } } })
+
+                    //db.users.update({ username: username, personalitytype: userTrait.personalitytype, "usertraits.traits": { $ne: userTrait.traits[i] } },
+                    //   {
+                    //       $addToSet: { "usertraits.$.traits": userTrait.traits[i] }
+                    //   }, false, true);
+                //}
 
                 //db.users.update(
                 //    { username: username },
                 //    { $push: { 'usertraits': { $each: userTraits } } },
                 //    next);
-                next(); 
+
             }
             
         });

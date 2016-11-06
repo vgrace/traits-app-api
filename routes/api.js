@@ -217,7 +217,7 @@ router.put('/userTraits/:username', function (req, res, next) {
     var username = req.params.username;
     var user_traits = req.body;
     res.setHeader('Content-Type', 'application/json');
-    data.addUserTraits(username, user_traits.traits, function (err) {
+    data.addUserTraits(username, user_traits, function (err) {
         if (err) {
             var ret_err = {
                 "message": err
