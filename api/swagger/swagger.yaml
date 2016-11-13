@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   version: "0.2.0"
-  title: Traits App API test
+  title: Traits App API
 # during dev, should point to your local machine
 host: traits-app-api.herokuapp.com #localhost:3000 #
 # basePath prefixes all resource paths 
@@ -18,23 +18,21 @@ consumes:
 produces:
   - application/json
 paths:
-  /personalityTraits/{type}:
-    put:
-      #operationId: save_user_traits
-      tags: [Personality Traits]
-      description: add a new personality traits to personality
+  /trait:
+    # our controller name
+    #x-swagger-router-controller: description
+    post:
+      #operationId: save_description
+      tags: [Trait]
+      description: add a new trait
       # movie info to be stored
       parameters:
         - name: type
-          type: string
-          in: path
-          required: true
-        - name: personalitytrait
-          description: Personality traits properties
+          description: trait description
           in: body
           required: true
           schema:
-            $ref: "#/definitions/PersonalityTraits"
+            $ref: "#/definitions/Trait"
       responses:
         "200":
           description: Success
@@ -44,7 +42,28 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  
+  /trait/{type}:
+    # our controller name
+    #x-swagger-router-controller: people
+    get:
+      #perationId: get_people_by_type
+      tags: [Trait]
+      description: get trait by type
+      # define the type of response for Success "200" and Error
+      parameters:
+        - name: type
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetTraitsListResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /userTraits/{username}:
     put:
       #operationId: update_user_traits
@@ -238,74 +257,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-    put:
-      #operationId: update_personality
-      tags: [Personality]
-      description: update a personality
-      # define the parameters
-      parameters:
-        - name: type
-          description: Personality type
-          type: string
-          in: path
-          required: true
-        - name: personality
-          description: Personality properties
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/Personality"
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/GeneralResponse"
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-    delete:
-      #operationId: delete_personality
-      tags: [Personality]
-      description: delete a personality
-      # define the parameters
-      parameters:
-        - name: type
-          description: Personality type
-          type: string
-          in: path
-          required: true
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/GeneralResponse"
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"  
   /userTypePart/{username}:
-    # our controller name 
-    #x-swagger-router-controller: user_type_part
-    get:
-      #operationId: get_user_type_part
-      tags: [User Type Part]
-      description: get a user
-      # define the type of response for Success "200" and Error
-      parameters:
-        - name: username
-          type: string
-          in: path
-          required: true
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/GeneralResponse"
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"
     put:
       #operationId: update_user_type_part
       tags: [User Type Part]
@@ -332,26 +284,6 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-    delete:
-      #operationId: delete_user_type_part
-      tags: [User Type Part]
-      description: delete a movie
-      # define the parameters
-      parameters:
-        - name: username
-          description: Username
-          type: string
-          in: path
-          required: true
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/GeneralResponse"
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"  
   /user:
     # our controller name
     #x-swagger-router-controller: user
@@ -400,74 +332,6 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /user/{username}:
-    # our controller name dfsdf
-    #x-swagger-router-controller: user
-    get:
-      #operationId: get_user
-      tags: [User]
-      description: get a user
-      # define the type of response for Success "200" and Error
-      parameters:
-        - name: username
-          type: string
-          in: path
-          required: true
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/GetUserResponse"
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-    patch:
-      #operationId: update_user
-      tags: [User]
-      description: update a user
-      # define the parameters
-      parameters:
-        - name: username
-          description: Username
-          type: string
-          in: path
-          required: true
-        - name: user
-          description: user properties
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/UpdateUser"
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/GeneralResponse"
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-    delete:
-      #operationId: delete_user
-      tags: [User]
-      description: delete a user
-      # define the parameters
-      parameters:
-        - name: username
-          description: User id
-          type: string
-          in: path
-          required: true
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/GeneralResponse"
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"  
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -494,11 +358,30 @@ definitions:
               type: string
             personalitytype:
               type: string
+  GetTraitsListResponse:
+    required:
+      - traits_list
+    properties:
+      # The array of traits
+      traits_list:
+        type: array
+        items: 
+          type: object
+          properties:
+            id:
+              type: string
+            type:
+              type: string
+            trait:
+              type: string
+            weight:
+              type: number
+    
   GetPeopleListResponse:
     required:
       - people_list
     properties:
-      # The array of movies
+      # The array of peeps
       people_list:
         type: array
         items: 
@@ -623,19 +506,12 @@ definitions:
         items: {
           type: string
         }
-  
-  PersonalityTraits:
-    type: object
-    properties:
-      traits:
-        type: array
-        items: {
-          type: string
-        }
-        
   Trait:
     type: object
     properties:
+      type:
+        type: string
+        description: Personality type
       trait:
         type: string
         description: Personality trait
@@ -670,17 +546,6 @@ definitions:
     required:
       - email
       - password
-      
-  UpdateUser:
-    type: object
-    properties:
-      name:
-        type: string
-        description: user name
-      lastname:
-        type: string
-        description: user lastname
-        
   UserSignin:
     type: object
     properties:
@@ -715,10 +580,6 @@ definitions:
       color:
         type: string
         description: task description
-      traits:
-        type: array
-        items: 
-         $ref: "#/definitions/Trait"
     required:
       - type
       

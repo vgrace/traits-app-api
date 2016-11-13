@@ -2,7 +2,7 @@
  "swagger": "2.0",
  "info": {
   "version": "0.2.0",
-  "title": "Traits App API te"
+  "title": "Traits App API"
  },
  "host": "traits-app-api.herokuapp.com",
  "basePath": "/api",
@@ -17,26 +17,20 @@
   "application/json"
  ],
  "paths": {
-  "/personalityTraits/{type}": {
-   "put": {
+  "/trait": {
+   "post": {
     "tags": [
-     "Personality Traits"
+     "Trait"
     ],
-    "description": "add a new personality traits to personality",
+    "description": "add a new trait",
     "parameters": [
      {
       "name": "type",
-      "type": "string",
-      "in": "path",
-      "required": true
-     },
-     {
-      "name": "personalitytrait",
-      "description": "Personality traits properties",
+      "description": "trait description",
       "in": "body",
       "required": true,
       "schema": {
-       "$ref": "#/definitions/PersonalityTraits"
+       "$ref": "#/definitions/Trait"
       }
      }
     ],
@@ -45,6 +39,36 @@
       "description": "Success",
       "schema": {
        "$ref": "#/definitions/GeneralResponse"
+      }
+     },
+     "default": {
+      "description": "Error",
+      "schema": {
+       "$ref": "#/definitions/ErrorResponse"
+      }
+     }
+    }
+   }
+  },
+  "/trait/{type}": {
+   "get": {
+    "tags": [
+     "Trait"
+    ],
+    "description": "get trait by type",
+    "parameters": [
+     {
+      "name": "type",
+      "type": "string",
+      "in": "path",
+      "required": true
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "schema": {
+       "$ref": "#/definitions/GetTraitsListResponse"
       }
      },
      "default": {
@@ -323,104 +347,9 @@
       }
      }
     }
-   },
-   "put": {
-    "tags": [
-     "Personality"
-    ],
-    "description": "update a personality",
-    "parameters": [
-     {
-      "name": "type",
-      "description": "Personality type",
-      "type": "string",
-      "in": "path",
-      "required": true
-     },
-     {
-      "name": "personality",
-      "description": "Personality properties",
-      "in": "body",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/Personality"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Success",
-      "schema": {
-       "$ref": "#/definitions/GeneralResponse"
-      }
-     },
-     "default": {
-      "description": "Error",
-      "schema": {
-       "$ref": "#/definitions/ErrorResponse"
-      }
-     }
-    }
-   },
-   "delete": {
-    "tags": [
-     "Personality"
-    ],
-    "description": "delete a personality",
-    "parameters": [
-     {
-      "name": "type",
-      "description": "Personality type",
-      "type": "string",
-      "in": "path",
-      "required": true
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Success",
-      "schema": {
-       "$ref": "#/definitions/GeneralResponse"
-      }
-     },
-     "default": {
-      "description": "Error",
-      "schema": {
-       "$ref": "#/definitions/ErrorResponse"
-      }
-     }
-    }
    }
   },
   "/userTypePart/{username}": {
-   "get": {
-    "tags": [
-     "User Type Part"
-    ],
-    "description": "get a user",
-    "parameters": [
-     {
-      "name": "username",
-      "type": "string",
-      "in": "path",
-      "required": true
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Success",
-      "schema": {
-       "$ref": "#/definitions/GeneralResponse"
-      }
-     },
-     "default": {
-      "description": "Error",
-      "schema": {
-       "$ref": "#/definitions/ErrorResponse"
-      }
-     }
-    }
-   },
    "put": {
     "tags": [
      "User Type Part"
@@ -442,35 +371,6 @@
       "schema": {
        "$ref": "#/definitions/UserTypePart"
       }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Success",
-      "schema": {
-       "$ref": "#/definitions/GeneralResponse"
-      }
-     },
-     "default": {
-      "description": "Error",
-      "schema": {
-       "$ref": "#/definitions/ErrorResponse"
-      }
-     }
-    }
-   },
-   "delete": {
-    "tags": [
-     "User Type Part"
-    ],
-    "description": "delete a movie",
-    "parameters": [
-     {
-      "name": "username",
-      "description": "Username",
-      "type": "string",
-      "in": "path",
-      "required": true
      }
     ],
     "responses": {
@@ -555,103 +455,6 @@
     }
    }
   },
-  "/user/{username}": {
-   "get": {
-    "tags": [
-     "User"
-    ],
-    "description": "get a user",
-    "parameters": [
-     {
-      "name": "username",
-      "type": "string",
-      "in": "path",
-      "required": true
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Success",
-      "schema": {
-       "$ref": "#/definitions/GetUserResponse"
-      }
-     },
-     "default": {
-      "description": "Error",
-      "schema": {
-       "$ref": "#/definitions/ErrorResponse"
-      }
-     }
-    }
-   },
-   "patch": {
-    "tags": [
-     "User"
-    ],
-    "description": "update a user",
-    "parameters": [
-     {
-      "name": "username",
-      "description": "Username",
-      "type": "string",
-      "in": "path",
-      "required": true
-     },
-     {
-      "name": "user",
-      "description": "user properties",
-      "in": "body",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/UpdateUser"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Success",
-      "schema": {
-       "$ref": "#/definitions/GeneralResponse"
-      }
-     },
-     "default": {
-      "description": "Error",
-      "schema": {
-       "$ref": "#/definitions/ErrorResponse"
-      }
-     }
-    }
-   },
-   "delete": {
-    "tags": [
-     "User"
-    ],
-    "description": "delete a user",
-    "parameters": [
-     {
-      "name": "username",
-      "description": "User id",
-      "type": "string",
-      "in": "path",
-      "required": true
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Success",
-      "schema": {
-       "$ref": "#/definitions/GeneralResponse"
-      }
-     },
-     "default": {
-      "description": "Error",
-      "schema": {
-       "$ref": "#/definitions/ErrorResponse"
-      }
-     }
-    }
-   }
-  },
   "/swagger": {
    "x-swagger-pipe": "swagger_raw"
   }
@@ -684,6 +487,33 @@
        },
        "personalitytype": {
         "type": "string"
+       }
+      }
+     }
+    }
+   }
+  },
+  "GetTraitsListResponse": {
+   "required": [
+    "traits_list"
+   ],
+   "properties": {
+    "traits_list": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "type": {
+        "type": "string"
+       },
+       "trait": {
+        "type": "string"
+       },
+       "weight": {
+        "type": "number"
        }
       }
      }
@@ -880,20 +710,13 @@
     }
    }
   },
-  "PersonalityTraits": {
-   "type": "object",
-   "properties": {
-    "traits": {
-     "type": "array",
-     "items": {
-      "type": "string"
-     }
-    }
-   }
-  },
   "Trait": {
    "type": "object",
    "properties": {
+    "type": {
+     "type": "string",
+     "description": "Personality type"
+    },
     "trait": {
      "type": "string",
      "description": "Personality trait"
@@ -940,19 +763,6 @@
     "password"
    ]
   },
-  "UpdateUser": {
-   "type": "object",
-   "properties": {
-    "name": {
-     "type": "string",
-     "description": "user name"
-    },
-    "lastname": {
-     "type": "string",
-     "description": "user lastname"
-    }
-   }
-  },
   "UserSignin": {
    "type": "object",
    "properties": {
@@ -996,12 +806,6 @@
     "color": {
      "type": "string",
      "description": "task description"
-    },
-    "traits": {
-     "type": "array",
-     "items": {
-      "$ref": "#/definitions/Trait"
-     }
     }
    },
    "required": [

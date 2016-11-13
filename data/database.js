@@ -17,7 +17,8 @@
                         users: db.collection("users"),
                         personalities: db.collection("personalities"),
                         people: db.collection("people"),
-                        stories: db.collection("stories")
+                        stories: db.collection("stories"),
+                        traits: db.collection("traits")
                     }
                     next(null, theDb); //return null error and the db-object
                 }

@@ -35,6 +35,39 @@
     }
 
     /*
+    * TRAIT
+    */
+    data.addTrait = function (trait, next) {
+        database.getDb(function (err, db) {
+            if (err) {
+                console.log("Failed to add trait to db: " + err)
+                next(err, null);
+            }
+            else {
+                db.traits.insert(trait, next);
+            }
+        })
+    }
+
+    data.getTraitsByType = function (type, next) {
+        database.getDb(function (err, db) {
+            if (err) {
+                next(err);
+            }
+            else {
+                db.traits.find({ type: type }).sort({ weight: -1}).toArray(function (err, results) {
+                    if (err) {
+                        next(err, null);
+                    }
+                    else {
+                        next(null, results);
+                    }
+                });
+            }
+        });
+    }
+
+    /*
     * PEOPLE
     */
     data.addPerson = function (person, next) {

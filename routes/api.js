@@ -119,6 +119,44 @@ router.put('/userTypePart/:username', function (req, res, next) {
     });
 })
 
+/* TRAIT */
+
+// Add a new trait
+router.post('/trait', function (req, res, next) {
+    var trait = req.body;
+    res.setHeader('Content-Type', 'application/json');
+
+    data.addTrait(trait, function (err, traitSaved) {
+        if (err) {
+            var ret_err = {
+                "message": err
+            };
+            res.status(500).send(ret_err);
+        }
+        else {
+            console.log(traitSaved);
+            res.json({ success: 1, description: "Trait added" });
+        }
+    });
+});
+
+// Get traits list
+router.get('/trait/:type', function (req, res, next) {
+    var type = req.params.type;
+    data.getTraitsByType(type, function (err, traits) {
+        res.setHeader('Content-Type', 'application/json');
+        if (err) {
+            var ret_err = {
+                "message": err
+            };
+            res.status(500).send(ret_err);
+        }
+        else {
+            res.send(traits);
+        }
+    });
+});
+
 /* PEOPLE */
 
 // Add a new person to the list
