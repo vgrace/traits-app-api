@@ -80,20 +80,13 @@
     }
    }
   },
-  "/userTraits/{username}": {
+  "/usertraits": {
    "put": {
     "tags": [
      "User Traits"
     ],
     "description": "update a user trait",
     "parameters": [
-     {
-      "name": "username",
-      "description": "Username",
-      "type": "string",
-      "in": "path",
-      "required": true
-     },
      {
       "name": "usertrait",
       "description": "User traits properties",
@@ -109,6 +102,42 @@
       "description": "Success",
       "schema": {
        "$ref": "#/definitions/GeneralResponse"
+      }
+     },
+     "default": {
+      "description": "Error",
+      "schema": {
+       "$ref": "#/definitions/ErrorResponse"
+      }
+     }
+    }
+   }
+  },
+  "/usertraits/{username}/{type}": {
+   "get": {
+    "tags": [
+     "User Traits"
+    ],
+    "description": "get user traits by type and username",
+    "parameters": [
+     {
+      "name": "username",
+      "type": "string",
+      "in": "path",
+      "required": true
+     },
+     {
+      "name": "type",
+      "type": "string",
+      "in": "path",
+      "required": true
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "schema": {
+       "$ref": "#/definitions/GetUserTraitsListResponse"
       }
      },
      "default": {
@@ -520,6 +549,19 @@
     }
    }
   },
+  "GetUserTraitsListResponse": {
+   "required": [
+    "user_traits_list"
+   ],
+   "properties": {
+    "user_traits_list": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/UserTraits"
+     }
+    }
+   }
+  },
   "GetPeopleListResponse": {
    "required": [
     "people_list"
@@ -626,12 +668,6 @@
      "items": {
       "$ref": "#/definitions/TypePart"
      }
-    },
-    "usertraits": {
-     "type": "array",
-     "items": {
-      "$ref": "#/definitions/UserTraits"
-     }
     }
    }
   },
@@ -698,6 +734,10 @@
   "UserTraits": {
    "type": "object",
    "properties": {
+    "username": {
+     "type": "string",
+     "description": "username"
+    },
     "personalitytype": {
      "type": "string",
      "description": "personality type for user selected traits"
@@ -750,12 +790,6 @@
      "type": "string",
      "format": "date-time",
      "description": "The date the user registered (E.g. '2016-06-17T15:28:34Z' (RFC 3339, ISO 8601))"
-    },
-    "usertraits": {
-     "type": "array",
-     "items": {
-      "$ref": "#/definitions/UserTraits"
-     }
     }
    },
    "required": [

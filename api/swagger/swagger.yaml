@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   version: "0.2.0"
-  title: Traits App API
+  title: Traits App API 
 # during dev, should point to your local machine
 host: traits-app-api.herokuapp.com #localhost:3000 #
 # basePath prefixes all resource paths 
@@ -64,18 +64,13 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /userTraits/{username}:
+  /usertraits:
     put:
       #operationId: update_user_traits
       tags: [User Traits]
       description: update a user trait
       # define the parameters
       parameters:
-        - name: username
-          description: Username
-          type: string
-          in: path
-          required: true
         - name: usertrait
           description: User traits properties
           in: body
@@ -87,6 +82,32 @@ paths:
           description: Success
           schema:
             $ref: "#/definitions/GeneralResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /usertraits/{username}/{type}:
+    # our controller name
+    #x-swagger-router-controller: people
+    get:
+      #perationId: get_people_by_type
+      tags: [User Traits]
+      description: get user traits by type and username
+      # define the type of response for Success "200" and Error
+      parameters:
+        - name: username
+          type: string
+          in: path
+          required: true
+        - name: type
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetUserTraitsListResponse"
         default:
           description: Error
           schema:
@@ -376,6 +397,16 @@ definitions:
               type: string
             weight:
               type: number
+              
+  GetUserTraitsListResponse:
+    required:
+      - user_traits_list
+    properties:
+      # The array of traits
+      user_traits_list:
+        type: array
+        items: 
+          $ref: "#/definitions/UserTraits"
     
   GetPeopleListResponse:
     required:
@@ -449,10 +480,10 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/TypePart"
-      usertraits:
-        type: array
-        items:
-          $ref: "#/definitions/UserTraits"
+      #usertraits:
+        #type: array
+        #items:
+          #$ref: "#/definitions/UserTraits"
           
   GetPersonalityResponse:
     required:
@@ -498,6 +529,9 @@ definitions:
   UserTraits:
     type: object
     properties:
+      username:
+        type: string
+        description: username
       personalitytype:
         type: string
         description: personality type for user selected traits
@@ -538,10 +572,10 @@ definitions:
         type: string
         format: date-time
         description: The date the user registered (E.g. '2016-06-17T15:28:34Z' (RFC 3339, ISO 8601))
-      usertraits:
-        type: array
-        items:
-          $ref: "#/definitions/UserTraits"
+      #usertraits:
+        #type: array
+        #items:
+          #$ref: "#/definitions/UserTraits"
           
     required:
       - email

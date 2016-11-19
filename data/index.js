@@ -35,6 +35,112 @@
     }
 
     /*
+    * USER TRAITS
+    */
+    //data.addUserTraits = function (userTraits, next) {
+    //    database.getDb(function (err, db) {
+    //        if (err) {
+    //            console.log("Failed to add user trait");
+    //            next(err, null);
+    //        }
+    //        else {
+    //            db.userTrait.insert(userTraits, next); 
+    //            ////db.users.update({"username": "tom"}, {"$set": {"documents": []}})
+    //            //console.log(userTrait);
+    //            //db.usertraits.update({ "username": username },
+    //            //    { "$pull": { 'usertraits': { 'personalitytype': userTrait.personalitytype } } });
+
+    //            //db.usertraits.update({ "username": username },
+    //            //    { "$push": { "usertraits": { "personalitytype": userTrait.personalitytype, "traits": userTrait.traits } } }, next);
+
+    //            ////db.users.update({ "username": username },
+    //            ////    { "$pull": { 'usertraits': { 'personalitytype': userTrait.personalitytype } }});
+
+    //            ////db.users.update({ "username": username },
+    //            ////    { "$push": { "usertraits": { "personalitytype": userTrait.personalitytype, "traits": userTrait.traits} } }, next);
+
+    //            ////db.users.update({ "username": username, "usertraits.personalitytype": userTrait.personalitytype },
+    //            ////    { "$set": { "traits": userTrait.traits } });
+
+    //            ////for (var i = 0; i < userTrait.traits.length; i++) {
+    //            //    //db.users.update(
+    //            //    //{ username: username, "usertraits.personalitytype": userTrait.personalitytype},
+    //            //    //{ $pull: { usertraits: { 'usertraits.traits': userTraits[i].trait } } })
+
+    //            //    //db.users.update({ username: username, personalitytype: userTrait.personalitytype, "usertraits.traits": { $ne: userTrait.traits[i] } },
+    //            //    //   {
+    //            //    //       $addToSet: { "usertraits.$.traits": userTrait.traits[i] }
+    //            //    //   }, false, true);
+    //            ////}
+
+    //            ////db.users.update(
+    //            ////    { username: username },
+    //            ////    { $push: { 'usertraits': { $each: userTraits } } },
+    //            ////    next);
+
+    //        }
+
+    //    });
+    //}
+
+    data.getUserTraitsByType = function (username, type, next) {
+        database.getDb(function (err, db) {
+            if (err) {
+                console.log("Failed to add user trait");
+                next(err, null);
+            }
+            else {
+                db.usertraits.find({ "username": username, "personalitytype": type }).toArray(function (err, results) {
+                    if (err) {
+                        next(err, null);
+                    }
+                    else {
+                        next(null, results);
+                    }
+                });
+            }
+        });
+    }
+
+    data.updateUserTraitsByType = function (usertraitsObject, next) {
+        database.getDb(function (err, db) {
+            if (err) {
+                console.log("Failed to add user trait");
+                next(err, null);
+            }
+            else {
+                //db.users.update({"username": "tom"}, {"$set": {"documents": []}})
+                console.log(usertraitsObject);
+                db.usertraits.findOne({ "username": usertraitsObject.username, "personalitytype": usertraitsObject.personalitytype }, function (err, results) {
+                    if (err) {
+                        next(err, null); 
+                    }
+                    else {
+                        if (results !== null) {
+                            console.log("UPDATE USERTRAITS");
+                            console.log(results); 
+                            // Update
+                            db.usertraits.update({ "username": usertraitsObject.username, "personalitytype": usertraitsObject.personalitytype },
+                                { $set: { 'traits': [] } }, { multi: true }); 
+
+                            db.usertraits.update({ "username": usertraitsObject.username, "personalitytype": usertraitsObject.personalitytype },
+                                { $set: { 'traits': usertraitsObject.traits } }, { multi: true }, next);
+                        }
+                        else {
+                            // Add new 
+                            console.log("ADD USERTRAITS"); 
+                            db.usertraits.insert(usertraitsObject, next);
+                        }
+
+                    }
+                }); 
+
+            }
+
+        });
+    }
+
+    /*
     * TRAIT
     */
     data.addTrait = function (trait, next) {
@@ -173,47 +279,7 @@
         });
     }
 
-    /*
-    * USER TRAITS
-    */
-    data.addUserTraits = function (username, userTrait, next) {
-        database.getDb(function (err, db) {
-            if (err) {
-                console.log("Failed to add user trait");
-                next(err, null);
-            }
-            else {
-                //db.users.update({"username": "tom"}, {"$set": {"documents": []}})
-                console.log(userTrait);
-                db.users.update({ "username": username },
-                    { "$pull": { 'usertraits': { 'personalitytype': userTrait.personalitytype } }});
-
-                db.users.update({ "username": username },
-                    { "$push": { "usertraits": { "personalitytype": userTrait.personalitytype, "traits": userTrait.traits} } }, next);
-
-                //db.users.update({ "username": username, "usertraits.personalitytype": userTrait.personalitytype },
-                //    { "$set": { "traits": userTrait.traits } });
-
-                //for (var i = 0; i < userTrait.traits.length; i++) {
-                    //db.users.update(
-                    //{ username: username, "usertraits.personalitytype": userTrait.personalitytype},
-                    //{ $pull: { usertraits: { 'usertraits.traits': userTraits[i].trait } } })
-
-                    //db.users.update({ username: username, personalitytype: userTrait.personalitytype, "usertraits.traits": { $ne: userTrait.traits[i] } },
-                    //   {
-                    //       $addToSet: { "usertraits.$.traits": userTrait.traits[i] }
-                    //   }, false, true);
-                //}
-
-                //db.users.update(
-                //    { username: username },
-                //    { $push: { 'usertraits': { $each: userTraits } } },
-                //    next);
-
-            }
-            
-        });
-    }
+    
 
     /*
     * PERSONALITY TRAITS
@@ -290,11 +356,11 @@
                             username: user.username,
                             passwordHash: user.passwordHash,
                             salt: user.salt,
-                            usertypeparts: [],
-                            usertraits: []
+                            usertypeparts: []
                         };
                         //User does not exist, create user
                         db.users.insert(fullUser, next);
+                        
                     }
                     else {
                         next("User already exists", null);

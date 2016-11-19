@@ -251,11 +251,11 @@ router.get('/stories/:type', function (req, res, next) {
 /* USER TRAITS */
 
 // Add a new user traits to user
-router.put('/userTraits/:username', function (req, res, next) {
-    var username = req.params.username;
+router.put('/usertraits', function (req, res, next) {
+    //var username = req.params.username;
     var user_traits = req.body;
     res.setHeader('Content-Type', 'application/json');
-    data.addUserTraits(username, user_traits, function (err) {
+    data.updateUserTraitsByType(user_traits, function (err) {
         if (err) {
             var ret_err = {
                 "message": err
@@ -268,7 +268,24 @@ router.put('/userTraits/:username', function (req, res, next) {
     });
 });
 
-/* PEROSNALITY TRAITS*/
+router.get('/usertraits/:username/:type', function (req, res, next) {
+    var username = req.params.username;
+    var type = req.params.type;
+    data.getUserTraitsByType(username, type, function (err, usertraits) {
+        res.setHeader('Content-Type', 'application/json');
+        if (err) {
+            var ret_err = {
+                "message": err
+            };
+            res.status(500).send(ret_err);
+        }
+        else {
+            res.send(usertraits);
+        }
+    });
+}); 
+
+/* PERSONALITY TRAITS*/
 router.put('/personalityTraits/:type', function (req, res, next) {
     var type = req.params.type;
     var personality_traits = req.body;
