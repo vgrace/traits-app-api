@@ -330,7 +330,7 @@
                 next(err);
             }
             else {
-                db.usertypeparts.find({ "username": username }).toArray(function (err, results) {
+                db.usertypeparts.findOne({ "username": username }, function (err, results) {
                     if (err) {
                         next(err, null);
                     }
