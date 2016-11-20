@@ -1,7 +1,7 @@
 {
  "swagger": "2.0",
  "info": {
-  "version": "0.2.0",
+  "version": "0.4.0",
   "title": "Traits App API"
  },
  "host": "traits-app-api.herokuapp.com",
@@ -398,7 +398,7 @@
       "in": "body",
       "required": true,
       "schema": {
-       "$ref": "#/definitions/UserTypePart"
+       "$ref": "#/definitions/TypePart"
       }
      }
     ],
@@ -407,6 +407,35 @@
       "description": "Success",
       "schema": {
        "$ref": "#/definitions/GeneralResponse"
+      }
+     },
+     "default": {
+      "description": "Error",
+      "schema": {
+       "$ref": "#/definitions/ErrorResponse"
+      }
+     }
+    }
+   },
+   "get": {
+    "tags": [
+     "User Type Part"
+    ],
+    "description": "get all user type parts by user",
+    "parameters": [
+     {
+      "name": "username",
+      "description": "username",
+      "type": "string",
+      "in": "path",
+      "required": true
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "schema": {
+       "$ref": "#/definitions/UserTypePart"
       }
      },
      "default": {
@@ -662,12 +691,6 @@
     },
     "salt": {
      "type": "string"
-    },
-    "usertypeparts": {
-     "type": "array",
-     "items": {
-      "$ref": "#/definitions/TypePart"
-     }
     }
    }
   },
@@ -705,6 +728,10 @@
   "UserTypePart": {
    "type": "object",
    "properties": {
+    "username": {
+     "type": "string",
+     "description": "username"
+    },
     "type_percentage": {
      "type": "array",
      "items": {

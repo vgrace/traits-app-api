@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
-  version: "0.2.0"
-  title: Traits App API 
+  version: "0.4.0"
+  title: Traits App API
 # during dev, should point to your local machine
 host: traits-app-api.herokuapp.com #localhost:3000 #
 # basePath prefixes all resource paths 
@@ -295,12 +295,32 @@ paths:
           in: body
           required: true
           schema:
-            $ref: "#/definitions/UserTypePart"
+            $ref: "#/definitions/TypePart"
       responses:
         "200":
           description: Success
           schema:
             $ref: "#/definitions/GeneralResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    get:
+      #operationId: update_user_type_part
+      tags: [User Type Part]
+      description: get all user type parts by user
+      # define the parameters
+      parameters:
+        - name: username
+          description: username
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/UserTypePart"
         default:
           description: Error
           schema:
@@ -476,10 +496,10 @@ definitions:
         type: string
       salt:
         type: string
-      usertypeparts:
-        type: array
-        items:
-          $ref: "#/definitions/TypePart"
+      #usertypeparts:
+        #type: array
+        #items:
+          #$ref: "#/definitions/TypePart"
       #usertraits:
         #type: array
         #items:
@@ -505,13 +525,18 @@ definitions:
         type: string
       color:
         type: string
+  
   UserTypePart:
     type: object
     properties:
+      username:
+        type: string
+        description: username
       type_percentage:
         type: array
         items: 
          $ref: "#/definitions/TypePart"
+  
   TypePart:
     type: object
     properties:

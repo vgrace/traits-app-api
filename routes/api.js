@@ -106,7 +106,7 @@ router.put('/userTypePart/:username', function (req, res, next) {
     var username = req.params.username;
     var user_type_part = req.body;
     res.setHeader('Content-Type', 'application/json');
-    data.addUserTypeParts(username, user_type_part.type_percentage, function (err) {
+    data.updateUserTypeParts(username, user_type_part, function (err) {
         if (err) {
             var ret_err = {
                 "message": err
@@ -117,7 +117,24 @@ router.put('/userTypePart/:username', function (req, res, next) {
             res.json({ success: 1, description: "User type part added" });
         }
     });
-})
+});
+
+router.get('/userTypePart/:username', function (req, res, next) {
+    var username = req.params.username;
+    data.getUserTypePartsByType(username, function (err, usertypeparts) {
+        res.setHeader('Content-Type', 'application/json');
+        if (err) {
+            var ret_err = {
+                "message": err
+            };
+            res.status(500).send(ret_err);
+        }
+        else {
+            console.log(usertypeparts);
+            res.send(usertypeparts);
+        }
+    });
+});
 
 /* TRAIT */
 

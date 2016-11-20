@@ -150,7 +150,18 @@
                 next(err, null);
             }
             else {
-                db.traits.insert(trait, next);
+                db.traits.findOne({ "type": trait.type, "trait": trait.trait }, function (err, results) {
+                    if (results != null) {
+                        //Trait exists, add weight
+                        db.traits.update({ "type": trait.type, "trait": trait.trait },
+                            { $inc: { "weight": 1 } }, next);
+                    }
+                    else {
+                        //Add trait
+                        trait.weight = 1; 
+                        db.traits.insert(trait, next);
+                    }
+                }); 
             }
         })
     }
@@ -301,7 +312,7 @@
                     // If trait does not exists, add to traits array
                     db.personalities.update({ type: type, "traits.trait": { $ne: personalityTraits[i] } },
                        {
-                           $addToSet: { "traits": { 'trait': personalityTraits[i], 'weight': 0 } }
+                           $addToSet: { "traits": { 'trait': personalityTraits[i], 'weight': 1 } }
                        }, false, true);
                 }
                 next(null);
@@ -312,23 +323,62 @@
     /*
     * USER TYPE PARTS
     */
-    data.addUserTypeParts = function (username, userTypePart, next) {
+
+    data.getUserTypePartsByType = function (username, next) {
+        database.getDb(function (err, db) {
+            if (err) {
+                next(err);
+            }
+            else {
+                db.usertypeparts.find({ "username": username }).toArray(function (err, results) {
+                    if (err) {
+                        next(err, null);
+                    }
+                    else {
+                        next(null, results);
+                    }
+                });
+            }
+        });
+    }
+
+    data.updateUserTypeParts = function (username, userTypePart, next) {
         database.getDb(function (err, db) {
             if (err) {
                 console.log("Failed to add user type part");
                 next(err, null);
             }
             else {
-                for (var i = 0; i < userTypePart.length; i++) {
-                    db.users.update(
-                    { username: username },
-                    { $pull: { usertypeparts: { 'personalitytype': userTypePart[i].personalitytype } } })
-                }
-               
-                db.users.update(
-                    { username: username },
-                    { $push: { 'usertypeparts': { $each: userTypePart } } },
-                    next);
+                // Check if user has usertypeparts 
+                db.usertypeparts.findOne({ "username": username }, function (err, results) {
+                    console.log(results);
+                    userTypePart["lastupdate"] = new Date().toISOString();
+                    if (results != null) {
+                        db.usertypeparts.findOne({ "username": username, "usertypeparts.personalitytype": userTypePart.personalitytype }, function (err, results2) {
+                            if (results2 != null) {
+                                //Usertypeparts for this type exists
+                                console.log("Update type"); 
+                                db.usertypeparts.update({ "username": username, "usertypeparts.personalitytype": userTypePart.personalitytype },
+                                    { "$set": { "usertypeparts.$.percentage": userTypePart.percentage, "usertypeparts.$.lastupdate": userTypePart.lastupdate } }, next);
+                            }
+                            else {
+                                //Add to usertypeparts array
+                                console.log("Add type");
+                                db.usertypeparts.update({ "username": username },
+                                    { "$push": { "usertypeparts": userTypePart } }, next);
+                            }
+                        }); 
+                    }
+                    else {
+                        console.log("Usertypeparts not created for this user");
+                        console.log("Create usertypeparts");
+                        var utp = {
+                            "username": username,
+                            "usertypeparts": [userTypePart]
+                        };
+                        db.usertypeparts.insert(utp, next);
+                    }
+                });
             }
         });
     }
@@ -355,8 +405,8 @@
                             email: user.email,
                             username: user.username,
                             passwordHash: user.passwordHash,
-                            salt: user.salt,
-                            usertypeparts: []
+                            salt: user.salt, 
+                            timestamp: new Date().toISOString()
                         };
                         //User does not exist, create user
                         db.users.insert(fullUser, next);
