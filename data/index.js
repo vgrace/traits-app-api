@@ -90,14 +90,14 @@
                 next(err, null);
             }
             else {
-                db.usertraits.find({ "username": username, "personalitytype": type }).toArray(function (err, results) {
+                db.usertraits.find({ "username": username, "personalitytype": type }, function (err, results) {
                     if (err) {
                         next(err, null);
                     }
                     else {
                         next(null, results);
                     }
-                });
+                }); 
             }
         });
     }
